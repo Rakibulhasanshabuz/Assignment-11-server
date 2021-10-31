@@ -21,6 +21,7 @@ async function run(){
         await client.connect();
         const database = client.db('hotelCollection');
         const servicesCollection = database.collection('services');
+        const ordersCollection = database.collection('orders');
 
         // Get API
         app.get('/services', async(req, res) => {
@@ -48,6 +49,23 @@ async function run(){
             res.json(result)
 
         });
+
+        // orders
+        app.get('/orders', async(req, res) => {
+          const cursor = ordersCollection.find({});
+          const orders = await cursor.toArray();
+          res.send(orders);
+      })
+
+        app.post('/orders', async(req, res) => {
+          const order = req.body;
+          console.log('hit the post api', order)
+
+          const result = await ordersCollection.insertOne(order);
+          console.log(result);
+          res.json(result)
+
+      });
 
         // DELETE API
         app.delete('/services/:id', async(req, res) => {
